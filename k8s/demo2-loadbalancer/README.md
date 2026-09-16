@@ -1,10 +1,10 @@
 # Demo 1: Nginx with LoadBalancer Service
 
-This demo deploys Nginx with a simple LoadBalancer service for external access in the `demo1-loadbalancer` namespace.
+This demo deploys Nginx with a simple LoadBalancer service for external access in the `demo2-loadbalancer` namespace.
 
 ## Namespace
 
-All resources are deployed in the `demo1-loadbalancer` namespace for isolation.
+All resources are deployed in the `demo2-loadbalancer` namespace for isolation.
 
 ## Files Overview
 
@@ -33,7 +33,7 @@ kubectl apply -f .
 ### 3. Get External IP
 
 ```bash
-kubectl get service nginx-loadbalancer -n demo1-loadbalancer -w
+kubectl get service nginx-loadbalancer -n demo2-loadbalancer -w
 ```
 
 Wait for `EXTERNAL-IP` to be assigned, then press `Ctrl+C`.
@@ -48,19 +48,19 @@ Wait for `EXTERNAL-IP` to be assigned, then press `Ctrl+C`.
 curl http://<EXTERNAL-IP>
 ```
 
-Replace `<EXTERNAL-IP>` -n demo1-loadbalancer
+Replace `<EXTERNAL-IP>` -n demo2-loadbalancer
 
 # Check pods
 
-kubectl get pods -n demo1-loadbalancer -l app=nginx
+kubectl get pods -n demo2-loadbalancer -l app=nginx
 
 # Check service
 
-kubectl get service -n demo1-loadbalancer nginx-loadbalancer
+kubectl get service -n demo2-loadbalancer nginx-loadbalancer
 
 # View logs
 
-kubectl logs -n demo1-loadbalancer -l app=nginx
+kubectl logs -n demo2-loadbalancer -l app=nginx
 
 ````
 
@@ -68,10 +68,10 @@ kubectl logs -n demo1-loadbalancer -l app=nginx
 
 ```bash
 # Delete all resources
-kubectl delete -f . -n demo1-loadbalancer
+kubectl delete -f . -n demo2-loadbalancer
 
 # Or delete the entire namespace (includes all resources)
-kubectl delete namespace demo1-loadbalancer=nginx
+kubectl delete namespace demo2-loadbalancer=nginx
 ````
 
 ## Clean Up

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: demo2
-  namespace: demo2-statefulset
+  name: demo3
+  namespace: demo3-statefulset
   labels:
-    app: demo2
+    app: demo3
 spec:
-  serviceName: demo2-service
+  serviceName: demo3-service
   replicas: 1
   selector:
     matchLabels:
-      app: demo2
+      app: demo3
   template:
     metadata:
       labels:
-        app: demo2
+        app: demo3
     spec:
       containers:
-        - name: demo2
+        - name: demo3
           image: python:3.11-slim
           ports:
             - containerPort: 8080
@@ -67,7 +67,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: demo2-config
+            name: demo3-config
   volumeClaimTemplates:
     - metadata:
         name: data

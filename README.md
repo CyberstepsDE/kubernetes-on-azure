@@ -7,9 +7,9 @@ Advanced Kubernetes on Azure Kubernetes Service (AKS). Terraform provisions the 
 | Path | What it covers |
 | --- | --- |
 | [`terraform/`](terraform/) | AKS cluster provisioning with Terraform (resource group, cluster, node pool, outputs) |
-| [`k8s/demo1-loadbalancer/`](k8s/demo1-loadbalancer/) | Exposing a Deployment through a `LoadBalancer` Service with a public Azure IP |
-| [`k8s/demo2-statefulset/`](k8s/demo2-statefulset/) | StatefulSet with stable network identity, headless Service, and ConfigMap |
-| [`k8s/demo3-acr-image/`](k8s/demo3-acr-image/) | Deploy the ACR image from the container-security pipeline; falls back to a public image if it is gone |
+| [`k8s/demo1-acr-image/`](k8s/demo1-acr-image/) | Deploy the ACR image from the container-security pipeline; falls back to a public image if it is gone |
+| [`k8s/demo2-loadbalancer/`](k8s/demo2-loadbalancer/) | Exposing a Deployment through a `LoadBalancer` Service with a public Azure IP |
+| [`k8s/demo3-statefulset/`](k8s/demo3-statefulset/) | StatefulSet with stable network identity, headless Service, and ConfigMap |
 
 Each directory has its own README with step-by-step instructions.
 
@@ -35,9 +35,9 @@ kubectl get nodes
 Then run the demos:
 
 ```bash
-kubectl apply -f k8s/demo1-loadbalancer/
-kubectl apply -f k8s/demo2-statefulset/
-kubectl apply -f k8s/demo3-acr-image/
+kubectl apply -f k8s/demo1-acr-image/
+kubectl apply -f k8s/demo2-loadbalancer/
+kubectl apply -f k8s/demo3-statefulset/
 ```
 
 ## Cleanup
@@ -45,7 +45,7 @@ kubectl apply -f k8s/demo3-acr-image/
 AKS clusters cost money while they run. Tear down when finished:
 
 ```bash
-kubectl delete -f k8s/demo3-acr-image/ -f k8s/demo2-statefulset/ -f k8s/demo1-loadbalancer/
+kubectl delete -f k8s/demo3-statefulset/ -f k8s/demo2-loadbalancer/ -f k8s/demo1-acr-image/
 cd terraform && terraform destroy
 ```
 

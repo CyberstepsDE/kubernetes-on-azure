@@ -15,7 +15,7 @@ LoadBalancer Service (Port 80)
           ↓
    ┌──────┬──────┬──────┐
    │      │      │      │
-demo2-0  demo2-1  demo2-2
+demo3-0  demo3-1  demo3-2
    │      │      │      │
  PVC-0   PVC-1   PVC-2  (1Gi each)
 ```
@@ -29,7 +29,7 @@ Each pod has:
 ## 📁 Project Files
 
 ```
-demo2-statefulset/
+demo3-statefulset/
 ├── README.md           # This documentation
 ├── configmap.yaml      # Application code (Python + HTML)
 ├── statefulset.yaml    # StatefulSet definition + Namespace
@@ -94,37 +94,37 @@ Check if all resources are created:
 
 ```bash
 # Check namespace
-kubectl get namespace demo2-statefulset
+kubectl get namespace demo3-statefulset
 
 # Check all resources in the namespace
-kubectl get all -n demo2-statefulset
+kubectl get all -n demo3-statefulset
 
 # Check StatefulSet status
-kubectl get statefulset -n demo2-statefulset
+kubectl get statefulset -n demo3-statefulset
 
 # Check pods
-kubectl get pods -n demo2-statefulset
+kubectl get pods -n demo3-statefulset
 
 # Check PVCs
-kubectl get pvc -n demo2-statefulset
+kubectl get pvc -n demo3-statefulset
 
 # Check service
-kubectl get svc -n demo2-statefulset
+kubectl get svc -n demo3-statefulset
 ```
 
 Expected output:
 
 ```
 NAME                READY   STATUS    RESTARTS   AGE
-pod/demo2-0         1/1     Running   0          2m
-pod/demo2-1         1/1     Running   0          2m
-pod/demo2-2         1/1     Running   0          1m
+pod/demo3-0         1/1     Running   0          2m
+pod/demo3-1         1/1     Running   0          2m
+pod/demo3-2         1/1     Running   0          1m
 
 NAME                    TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-service/demo2-service   LoadBalancer   10.96.123.45    <pending>       80:30123/TCP   2m
+service/demo3-service   LoadBalancer   10.96.123.45    <pending>       80:30123/TCP   2m
 
 NAME                     READY   AGE
-statefulset.apps/demo2   3/3     2m
+statefulset.apps/demo3   3/3     2m
 ```
 
 ### Step 4: Wait for Pods to be Ready
@@ -132,7 +132,7 @@ statefulset.apps/demo2   3/3     2m
 Monitor pod status:
 
 ```bash
-kubectl get pods -n demo2-statefulset -w
+kubectl get pods -n demo3-statefulset -w
 # Press Ctrl+C to stop watching
 ```
 
@@ -141,7 +141,7 @@ Wait until all pods show `1/1 READY` and `Running` status.
 ### Step 5: Get the Service External IP
 
 ```bash
-kubectl get svc demo2-service -n demo2-statefulset
+kubectl get svc demo3-service -n demo3-statefulset
 ```
 
 **For Cloud Providers (AWS/GCP/Azure):**
@@ -150,13 +150,13 @@ Wait for `EXTERNAL-IP` to show a public IP address (may take 1-2 minutes)
 **For Minikube:**
 
 ```bash
-minikube service demo2-service -n demo2-statefulset
+minikube service demo3-service -n demo3-statefulset
 ```
 
 **For Kind or Docker Desktop:**
 
 ```bash
-kubectl port-forward svc/demo2-service 8080:80 -n demo2-statefulset
+kubectl port-forward svc/demo3-service 8080:80 -n demo3-statefulset
 # Then access: http://localhost:8080
 ```
 
@@ -195,16 +195,16 @@ Let's verify that data persists across pod restarts:
 
 ```bash
 # Delete the first pod
-kubectl delete pod demo2-0 -n demo2-statefulset
+kubectl delete pod demo3-0 -n demo3-statefulset
 
 # Watch it recreate
-kubectl get pods -n demo2-statefulset -w
+kubectl get pods -n demo3-statefulset -w
 ```
 
 #### Test 3: Verify Data Persisted
 
 ```bash
-# Wait for demo2-0 to be Running again
+# Wait for demo3-0 to be Running again
 # Refresh your browser
 # Your notes should still be there! ✅
 ```
@@ -215,11 +215,11 @@ kubectl get pods -n demo2-statefulset -w
 # Port forward to specific pods to see their individual storage
 
 # Pod 0
-kubectl port-forward pod/demo2-0 8080:8080 -n demo2-statefulset
+kubectl port-forward pod/demo3-0 8080:8080 -n demo3-statefulset
 # Open: http://localhost:8080 - Write "Notes from Pod 0"
 
 # Pod 1 (in a new terminal)
-kubectl port-forward pod/demo2-1 8081:8080 -n demo2-statefulset
+kubectl port-forward pod/demo3-1 8081:8080 -n demo3-statefulset
 # Open: http://localhost:8081 - Write "Notes from Pod 1"
 
 # Each pod has its own storage! 🎯
@@ -231,33 +231,33 @@ kubectl port-forward pod/demo2-1 8081:8080 -n demo2-statefulset
 
 ```bash
 # View logs from a specific pod
-kubectl logs demo2-0 -n demo2-statefulset
+kubectl logs demo3-0 -n demo3-statefulset
 
 # Follow logs in real-time
-kubectl logs -f demo2-0 -n demo2-statefulset
+kubectl logs -f demo3-0 -n demo3-statefulset
 
 # View logs from all pods
-kubectl logs -l app=demo2 -n demo2-statefulset
+kubectl logs -l app=demo3 -n demo3-statefulset
 ```
 
 ### Check Pod Details
 
 ```bash
 # Describe a pod
-kubectl describe pod demo2-0 -n demo2-statefulset
+kubectl describe pod demo3-0 -n demo3-statefulset
 
 # Check resource usage
-kubectl top pod -n demo2-statefulset
+kubectl top pod -n demo3-statefulset
 ```
 
 ### Inspect PersistentVolumeClaims
 
 ```bash
 # List all PVCs
-kubectl get pvc -n demo2-statefulset
+kubectl get pvc -n demo3-statefulset
 
 # Describe a specific PVC
-kubectl describe pvc data-demo2-0 -n demo2-statefulset
+kubectl describe pvc data-demo3-0 -n demo3-statefulset
 
 # Check associated PersistentVolumes
 kubectl get pv
@@ -267,23 +267,23 @@ kubectl get pv
 
 ```bash
 # Shell into a pod
-kubectl exec -it demo2-0 -n demo2-statefulset -- /bin/sh
+kubectl exec -it demo3-0 -n demo3-statefulset -- /bin/sh
 
 # Check the notes file
-kubectl exec demo2-0 -n demo2-statefulset -- cat /data/notes/notes.txt
+kubectl exec demo3-0 -n demo3-statefulset -- cat /data/notes/notes.txt
 
 # List mounted volumes
-kubectl exec demo2-0 -n demo2-statefulset -- df -h
+kubectl exec demo3-0 -n demo3-statefulset -- df -h
 ```
 
 ### Check StatefulSet Status
 
 ```bash
 # Get StatefulSet details
-kubectl describe statefulset demo2 -n demo2-statefulset
+kubectl describe statefulset demo3 -n demo3-statefulset
 
 # Check events
-kubectl get events -n demo2-statefulset --sort-by='.lastTimestamp'
+kubectl get events -n demo3-statefulset --sort-by='.lastTimestamp'
 ```
 
 ## 🔧 Configuration
@@ -294,13 +294,13 @@ Edit the StatefulSet to change the number of replicas:
 
 ```bash
 # Scale up to 5 replicas
-kubectl scale statefulset demo2 --replicas=5 -n demo2-statefulset
+kubectl scale statefulset demo3 --replicas=5 -n demo3-statefulset
 
 # Scale down to 2 replicas
-kubectl scale statefulset demo2 --replicas=2 -n demo2-statefulset
+kubectl scale statefulset demo3 --replicas=2 -n demo3-statefulset
 
 # Check status
-kubectl get pods -n demo2-statefulset
+kubectl get pods -n demo3-statefulset
 ```
 
 ### Update the Application Code
@@ -317,7 +317,7 @@ kubectl apply -f configmap.yaml
 3. Restart pods to pick up changes:
 
 ```bash
-kubectl rollout restart statefulset demo2 -n demo2-statefulset
+kubectl rollout restart statefulset demo3 -n demo3-statefulset
 ```
 
 ### Change Storage Size
@@ -341,26 +341,26 @@ resources:
 ### Restart All Pods
 
 ```bash
-kubectl rollout restart statefulset demo2 -n demo2-statefulset
+kubectl rollout restart statefulset demo3 -n demo3-statefulset
 ```
 
 ### View Rollout Status
 
 ```bash
-kubectl rollout status statefulset demo2 -n demo2-statefulset
+kubectl rollout status statefulset demo3 -n demo3-statefulset
 ```
 
 ### Update ConfigMap and Restart
 
 ```bash
 kubectl apply -f configmap.yaml
-kubectl rollout restart statefulset demo2 -n demo2-statefulset
+kubectl rollout restart statefulset demo3 -n demo3-statefulset
 ```
 
 ### Check Service Endpoints
 
 ```bash
-kubectl get endpoints demo2-service -n demo2-statefulset
+kubectl get endpoints demo3-service -n demo3-statefulset
 ```
 
 ## 🧹 Cleanup
@@ -376,7 +376,7 @@ kubectl delete -f statefulset.yaml
 kubectl delete -f configmap.yaml
 
 # Or delete the entire namespace (removes everything)
-kubectl delete namespace demo2-statefulset
+kubectl delete namespace demo3-statefulset
 ```
 
 ### Keep Data, Remove Pods
@@ -384,20 +384,20 @@ kubectl delete namespace demo2-statefulset
 To remove pods but keep PVCs:
 
 ```bash
-kubectl delete statefulset demo2 -n demo2-statefulset --cascade=orphan
+kubectl delete statefulset demo3 -n demo3-statefulset --cascade=orphan
 ```
 
 ### Delete Specific Resources
 
 ```bash
 # Delete only the service
-kubectl delete svc demo2-service -n demo2-statefulset
+kubectl delete svc demo3-service -n demo3-statefulset
 
 # Delete only the StatefulSet (keeps PVCs)
-kubectl delete statefulset demo2 -n demo2-statefulset
+kubectl delete statefulset demo3 -n demo3-statefulset
 
 # Delete specific PVC
-kubectl delete pvc data-demo2-0 -n demo2-statefulset
+kubectl delete pvc data-demo3-0 -n demo3-statefulset
 ```
 
 ## ❓ Troubleshooting
@@ -410,7 +410,7 @@ kubectl delete pvc data-demo2-0 -n demo2-statefulset
 
 ```bash
 # Check pod events
-kubectl describe pod demo2-0 -n demo2-statefulset
+kubectl describe pod demo3-0 -n demo3-statefulset
 
 # Common issues:
 # 1. No storage provisioner
@@ -420,7 +420,7 @@ kubectl get sc  # Check StorageClass
 kubectl describe nodes
 
 # 3. PVC not bound
-kubectl get pvc -n demo2-statefulset
+kubectl get pvc -n demo3-statefulset
 ```
 
 ### Service Has No External IP
@@ -435,10 +435,10 @@ minikube tunnel  # Run in separate terminal
 
 # If using Kind/Docker Desktop
 # Use port-forward instead:
-kubectl port-forward svc/demo2-service 8080:80 -n demo2-statefulset
+kubectl port-forward svc/demo3-service 8080:80 -n demo3-statefulset
 
 # If on bare-metal, install MetalLB or use NodePort:
-kubectl edit svc demo2-service -n demo2-statefulset
+kubectl edit svc demo3-service -n demo3-statefulset
 # Change type: LoadBalancer to type: NodePort
 ```
 
@@ -450,16 +450,16 @@ kubectl edit svc demo2-service -n demo2-statefulset
 
 ```bash
 # 1. Check pods are running
-kubectl get pods -n demo2-statefulset
+kubectl get pods -n demo3-statefulset
 
 # 2. Check service endpoints
-kubectl get endpoints demo2-service -n demo2-statefulset
+kubectl get endpoints demo3-service -n demo3-statefulset
 
 # 3. Test from within cluster
-kubectl run test --rm -it --image=busybox -n demo2-statefulset -- wget -O- http://demo2-service
+kubectl run test --rm -it --image=busybox -n demo3-statefulset -- wget -O- http://demo3-service
 
 # 4. Check pod logs for errors
-kubectl logs demo2-0 -n demo2-statefulset
+kubectl logs demo3-0 -n demo3-statefulset
 ```
 
 ### Notes Not Persisting
@@ -470,13 +470,13 @@ kubectl logs demo2-0 -n demo2-statefulset
 
 ```bash
 # 1. Check PVC is bound
-kubectl get pvc -n demo2-statefulset
+kubectl get pvc -n demo3-statefulset
 
 # 2. Verify volume is mounted
-kubectl exec demo2-0 -n demo2-statefulset -- df -h
+kubectl exec demo3-0 -n demo3-statefulset -- df -h
 
 # 3. Check file exists
-kubectl exec demo2-0 -n demo2-statefulset -- ls -la /data/notes/
+kubectl exec demo3-0 -n demo3-statefulset -- ls -la /data/notes/
 
 # 4. Verify PV reclaim policy
 kubectl get pv
@@ -490,10 +490,10 @@ kubectl get pv
 
 ```bash
 # Check logs
-kubectl logs demo2-0 -n demo2-statefulset
+kubectl logs demo3-0 -n demo3-statefulset
 
 # Check previous logs
-kubectl logs demo2-0 -n demo2-statefulset --previous
+kubectl logs demo3-0 -n demo3-statefulset --previous
 
 # Common causes:
 # - ConfigMap not applied
@@ -506,7 +506,7 @@ kubectl logs demo2-0 -n demo2-statefulset --previous
 ### Key Concepts
 
 1. **Stable Network Identity**
-   - Each pod gets a predictable name: `demo2-0`, `demo2-1`, `demo2-2`
+   - Each pod gets a predictable name: `demo3-0`, `demo3-1`, `demo3-2`
    - Names remain stable across restarts
 
 2. **Persistent Storage**
@@ -525,7 +525,7 @@ kubectl logs demo2-0 -n demo2-statefulset --previous
 
 | Feature    | StatefulSet              | Deployment            |
 | ---------- | ------------------------ | --------------------- |
-| Pod naming | Predictable (demo2-0)    | Random (demo2-abc123) |
+| Pod naming | Predictable (demo3-0)    | Random (demo3-abc123) |
 | Storage    | Per-pod persistent       | Shared or ephemeral   |
 | Order      | Sequential               | Parallel              |
 | Use case   | Databases, stateful apps | Stateless apps        |
@@ -554,8 +554,8 @@ After completing this demo, you should understand:
 If you encounter issues:
 
 1. Check the Troubleshooting section above
-2. Review pod logs: `kubectl logs <pod-name> -n demo2-statefulset`
-3. Check Kubernetes events: `kubectl get events -n demo2-statefulset`
+2. Review pod logs: `kubectl logs <pod-name> -n demo3-statefulset`
+3. Check Kubernetes events: `kubectl get events -n demo3-statefulset`
 
 ## 📝 Notes
 
