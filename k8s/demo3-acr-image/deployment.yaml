@@ -1,0 +1,44 @@
+# Demo: Run the ACR Image
+#
+# Story: the same artifact that passed the CI/CD Trivy gate in the
+# container-security session, now running inside AKS.
+#
+#   Code -> CI/CD -> Trivy Gate -> ACR -> AKS -> Pod
+#
+# Before applying: replace <acr-name>, <image-name>, <tag> below with the
+# values from that session's pipeline output (e.g. az acr repository
+# show-tags --name <acr-name> --repository <image-name>).
+#
+# Fallback: if that image was deleted, rebuilt, or the ACR is gone, comment
+# out the "image:" line under it and uncomment the public fallback image
+# further down. The point of the demo (pipeline artifact -> running pod)
+# still lands with any image — the YAML is not the lesson.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acr-image-demo
+  labels:
+    app: acr-image-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: acr-image-demo
+  template:
+    metadata:
+      labels:
+        app: acr-image-demo
+    spec:
+      containers:
+        - name: app
+          # Primary: your ACR image from the container-security pipeline
+          image: <acr-name>.azurecr.io/<image-name>:<tag>
+
+          # Fallback (always pullable, no ACR needed): comment out the line
+          # above and uncomment one of these instead.
+          # image: mcr.microsoft.com/azuredocs/aci-helloworld
+          # image: nginx:1.27-alpine
+
+          ports:
+            - containerPort: 80
