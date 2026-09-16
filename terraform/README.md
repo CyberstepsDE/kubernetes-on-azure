@@ -27,15 +27,13 @@ This Terraform module provisions:
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/dor-a/cybersteps-module-3.git
+git clone https://github.com/CyberstepsDE/kubernetes-on-azure.git
 ```
-
-Replace `your-org` with the actual GitHub organization URL.
 
 ### Step 2: Navigate to the Terraform Directory
 
 ```bash
-cd cybersteps-module-3/week-5/session-2-advanced-k8s/terraform
+cd kubernetes-on-azure/terraform
 ```
 
 ### Step 3: Verify Terraform Installation
