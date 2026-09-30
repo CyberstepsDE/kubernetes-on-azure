@@ -99,6 +99,10 @@ cluster_name   = "my-aks-cluster"
 node_count     = 3
 vm_size        = "Standard_D2s_v3"
 subscription_id = "your-subscription-id"
+
+# Optional: pin a Kubernetes version. Omit (or leave null) to use the current AKS default.
+# List supported versions with: az aks get-versions --location "West Europe" -o table
+# kubernetes_version = "1.35"
 ```
 
 ### 3. Review the Plan
@@ -154,7 +158,7 @@ kubectl get nodes
 | `node_count`         | number | 1               | Number of nodes in the default node pool                       |
 | `vm_size`            | string | Standard_D2s_v3 | VM size for nodes (e.g., "Standard_D2s_v3", "Standard_D4s_v3") |
 | `subscription_id`    | string | -               | The Azure Subscription ID                                      |
-| `kubernetes_version` | string | 1.33            | The version of Kubernetes to use for the AKS cluster           |
+| `kubernetes_version` | string | null            | Kubernetes version; null = current AKS default (old versions may be LTS-only) |
 
 ## Outputs
 
