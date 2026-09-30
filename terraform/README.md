@@ -182,7 +182,7 @@ This configuration uses the Azure Provider version `~> 3.0`. For more informatio
 
 ## Kubernetes Version Management
 
-To specify a Kubernetes version for your cluster, you can add a `kubernetes_version` variable to `variables.tf` and configure it in `main.tf`.
+By default `kubernetes_version` is `null`, so AKS uses its current default version. To pin a specific version, set `kubernetes_version` in your `terraform.tfvars`.
 
 **Available Kubernetes versions** can be listed using:
 
