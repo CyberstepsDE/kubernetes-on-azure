@@ -117,13 +117,7 @@ terraform plan
 terraform apply
 ```
 
-### 5. Destroy Resources (when no longer needed)
-
-```bash
-terraform destroy
-```
-
-### 6. Obtain Kubeconfig
+### 5. Obtain Kubeconfig
 
 After the AKS cluster is created, retrieve the kubeconfig to connect to your cluster using kubectl:
 
@@ -138,6 +132,36 @@ For example, if your environment is "dev" and cluster name is "my-aks-cluster":
 ```bash
 az aks get-credentials --resource-group rg-dev-aks --name my-aks-cluster
 ```
+
+### 6. Let the Cluster Pull From Your Registry
+
+This Terraform does not connect the cluster to a container registry. To run images from your own Azure Container Registry (ACR), give the cluster's kubelet identity the `AcrPull` role on it:
+
+```bash
+az aks update -n <cluster_name> -g rg-<environment>-aks --attach-acr <acr-name>
+az aks check-acr -n <cluster_name> -g rg-<environment>-aks --acr <acr-name>.azurecr.io
+```
+
+Without this step, pods using your ACR image fail with `ErrImagePull` / `401 Unauthorized`. If your registry is gone, use a public image instead (see the Fallback section in [`k8s/demo1-acr-image`](../k8s/demo1-acr-image/README.md)).
+
+### 7. Pause, Don't Destroy
+
+You will keep using this cluster and your container registry. When you take a break, stop the cluster instead of destroying it (no compute cost while stopped):
+
+```bash
+az aks stop  -n <cluster_name> -g rg-<environment>-aks
+az aks start -n <cluster_name> -g rg-<environment>-aks
+```
+
+### 8. Destroy Resources (only when you are completely done)
+
+Only once you no longer need the cluster for any later work:
+
+```bash
+terraform destroy
+```
+
+This removes the cluster and its resource group. It does not delete your container registry; keep that too.
 
 This command merges the cluster credentials into your default kubeconfig file (usually `~/.kube/config`).
 
